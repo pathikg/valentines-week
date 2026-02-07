@@ -39,9 +39,11 @@ const ProposalPage = ({ onAccept }) => {
     setAttempts(newAttempts);
 
     if (newAttempts < 10) {
-      // Move the No button within a larger radius to avoid overlap with growing Yes button
-      const minRadius = 150; // Minimum distance from center
-      const maxRadius = 300; // Maximum distance from center
+      // Make radius responsive to screen size
+      const isMobile = window.innerWidth < 768;
+      const minRadius = isMobile ? 80 : 150; // Smaller radius on mobile
+      const maxRadius = isMobile ? 120 : 200; // Reduced max radius to stay in viewport
+
       const angle = Math.random() * Math.PI * 2;
       const distance = minRadius + Math.random() * (maxRadius - minRadius);
 
