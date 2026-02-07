@@ -148,9 +148,30 @@ const MapPage = () => {
       {/* Modal for selected day */}
       {selectedDay && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-hidden"
           onClick={closeModal}
         >
+          {/* Rose shower animation for Rose Day */}
+          {selectedDay.day === 1 && (
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(30)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute text-3xl animate-fall"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `-${Math.random() * 20}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${3 + Math.random() * 2}s`,
+                    opacity: 0.8
+                  }}
+                >
+                  🌹
+                </div>
+              ))}
+            </div>
+          )}
+
           <div
             className={`bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all`}
             onClick={(e) => e.stopPropagation()}
