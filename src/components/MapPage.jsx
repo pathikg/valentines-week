@@ -152,27 +152,46 @@ const MapPage = () => {
           onClick={closeModal}
         >
           <div
-            className={`bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all animate-bounce`}
+            className={`bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
-              <div className="text-8xl mb-4">{selectedDay.emoji}</div>
-              <h2 className="text-4xl font-bold text-pink-600 mb-4">
+              <h2 className="text-4xl font-bold text-pink-600 mb-2">
                 {selectedDay.name}
               </h2>
               <p className="text-gray-600 text-lg mb-6">
                 Day {selectedDay.day} of our Valentine's Journey
               </p>
 
-              {/* Placeholder content - you can customize this */}
-              <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white mb-6`}>
-                <p className="text-lg font-medium">
-                  🎁 Your special surprise for today will be revealed here!
-                </p>
-                <p className="text-sm mt-2 opacity-90">
-                  (You can customize this message for each day)
-                </p>
-              </div>
+              {/* Custom content for each day */}
+              {selectedDay.day === 1 ? (
+                // Rose Day special content
+                <div className="mb-6">
+                  <img
+                    src="https://media1.tenor.com/m/5W3O1UxUHcIAAAAC/cat-holding-a-rose-hand-emoji-charles-scarlet-wing.gif"
+                    alt="Rose for you"
+                    className="w-full max-w-xs mx-auto rounded-2xl shadow-xl mb-4"
+                  />
+                  <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white`}>
+                    <p className="text-lg font-medium">
+                      A rose for you! 🌹
+                    </p>
+                    <p className="text-sm mt-2 opacity-90">
+                      The beginning of our special week together 💕
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                // Placeholder for other days
+                <div className="mb-6">
+                  <div className="text-8xl mb-4">{selectedDay.emoji}</div>
+                  <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white`}>
+                    <p className="text-lg font-medium">
+                      🎁 Your special surprise for today will be revealed here!
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={closeModal}
