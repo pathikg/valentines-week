@@ -264,10 +264,10 @@ const MapPage = () => {
                         Correct! 💕
                       </p>
                       <p className="text-lg font-medium">
-                        Yes! It was in the classroom where our love story truly began 🎓💍
+                        Yes! It was in the classroom where I proposed to you with a rose 🌹🎓
                       </p>
                       <p className="text-sm mt-3 opacity-90">
-                        That moment will always be special to me ✨
+                        That special moment will always be in my heart ✨
                       </p>
                     </div>
                   )}

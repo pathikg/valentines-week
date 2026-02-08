@@ -160,14 +160,10 @@ const ProposalPage = ({ onAccept }) => {
               onClick={handleYesClick}
               style={{
                 transform: `scale(${yesButtonSize})`,
-                transformOrigin: 'center center'
-              }}
-              className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-12 py-4 rounded-full text-2xl font-bold hover:from-pink-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl relative"
-              style={{
-                transform: `scale(${yesButtonSize})`,
                 transformOrigin: 'center center',
                 zIndex: attempts >= 10 ? 30 : 20
               }}
+              className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-12 py-4 rounded-full text-2xl font-bold hover:from-pink-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl relative"
             >
               Yes! 💖
             </button>
