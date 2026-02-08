@@ -263,10 +263,13 @@ const MapPage = () => {
                       <p className="text-2xl font-bold mb-3">
                         Correct! 💕
                       </p>
-                      <p className="text-lg font-medium">
-                        Yes! It was in the classroom where I proposed to you with a rose 🌹🎓
+                      <p className="text-lg font-medium mb-3">
+                        Yes! It was in the classroom at KJSCE 🌹🎓
                       </p>
-                      <p className="text-sm mt-3 opacity-90">
+                      <p className="text-sm opacity-90">
+                        I was in second year... There was some event in college, and we were at the top floor. That's where I gave you the rose 🌹
+                      </p>
+                      <p className="text-sm mt-2 opacity-90">
                         That special moment will always be in my heart ✨
                       </p>
                     </div>
