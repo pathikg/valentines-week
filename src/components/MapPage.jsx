@@ -14,6 +14,9 @@ const valentineWeek = [
 const MapPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedDay, setSelectedDay] = useState(null);
+  const [quizAnswer, setQuizAnswer] = useState('');
+  const [quizCorrect, setQuizCorrect] = useState(false);
+  const [showTryAgain, setShowTryAgain] = useState(false);
 
   // For testing, you can uncomment this to simulate different dates
   // const [currentDate, setCurrentDate] = useState('2026-02-09');
@@ -25,11 +28,29 @@ const MapPage = () => {
   const handleCheckpointClick = (checkpoint) => {
     if (isUnlocked(checkpoint.date)) {
       setSelectedDay(checkpoint);
+      // Reset quiz state when opening modal
+      setQuizAnswer('');
+      setQuizCorrect(false);
+      setShowTryAgain(false);
     }
   };
 
   const closeModal = () => {
     setSelectedDay(null);
+    setQuizAnswer('');
+    setQuizCorrect(false);
+    setShowTryAgain(false);
+  };
+
+  const handleQuizAnswer = (answer) => {
+    setQuizAnswer(answer);
+    if (answer === 'Classroom') {
+      setQuizCorrect(true);
+      setShowTryAgain(false);
+    } else {
+      setShowTryAgain(true);
+      setTimeout(() => setShowTryAgain(false), 2000);
+    }
   };
 
   // SVG path for the journey route (winding path)
@@ -201,6 +222,55 @@ const MapPage = () => {
                       The beginning of our special week together 💕
                     </p>
                   </div>
+                </div>
+              ) : selectedDay.day === 2 ? (
+                // Propose Day - Quiz
+                <div className="mb-6">
+                  <div className="text-6xl mb-4">{selectedDay.emoji}</div>
+
+                  {!quizCorrect ? (
+                    <div>
+                      <p className="text-lg font-semibold text-gray-700 mb-6">
+                        Where was the first time I proposed to you with a rose? 🌹
+                      </p>
+
+                      <div className="space-y-3 mb-4">
+                        {['Powai', 'Classroom', 'Bedroom'].map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => handleQuizAnswer(option)}
+                            className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${
+                              quizAnswer === option
+                                ? option === 'Classroom'
+                                  ? 'bg-green-500 text-white'
+                                  : 'bg-red-400 text-white'
+                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+
+                      {showTryAgain && (
+                        <p className="text-red-500 font-semibold animate-pulse">
+                          Try again! 💭
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white`}>
+                      <p className="text-2xl font-bold mb-3">
+                        Correct! 💕
+                      </p>
+                      <p className="text-lg font-medium">
+                        Yes! It was in the classroom where our love story truly began 🎓💍
+                      </p>
+                      <p className="text-sm mt-3 opacity-90">
+                        That moment will always be special to me ✨
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 // Placeholder for other days
