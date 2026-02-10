@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 
 const valentineWeek = [
   { day: 1, date: '2026-02-07', name: 'Rose Day', emoji: '🌹', color: 'from-red-400 to-pink-400' },
@@ -18,6 +18,16 @@ const MapPage = () => {
   const [quizCorrect, setQuizCorrect] = useState(false);
   const [showTryAgain, setShowTryAgain] = useState(false);
 
+  // Chocolate game state
+  const [chocolateCount, setChocolateCount] = useState(1);
+  const [chocolateClicks, setChocolateClicks] = useState(0);
+  const [showChocolateCard, setShowChocolateCard] = useState(false);
+  const [isChocolateSpreading, setIsChocolateSpreading] = useState(false);
+  const [chocolateSpreadAnimate, setChocolateSpreadAnimate] = useState(false);
+  const [chocolateSpreadOrigin, setChocolateSpreadOrigin] = useState({ x: 0, y: 0 });
+  const [spreadChocolates, setSpreadChocolates] = useState([]);
+  const closeBtnRef = useRef(null);
+
   // For testing, you can uncomment this to simulate different dates
   // const [currentDate, setCurrentDate] = useState('2026-02-09');
 
@@ -32,6 +42,13 @@ const MapPage = () => {
       setQuizAnswer('');
       setQuizCorrect(false);
       setShowTryAgain(false);
+      // Reset chocolate game state
+      setChocolateCount(1);
+      setChocolateClicks(0);
+      setShowChocolateCard(false);
+      setIsChocolateSpreading(false);
+      setChocolateSpreadAnimate(false);
+      setSpreadChocolates([]);
     }
   };
 
@@ -40,6 +57,13 @@ const MapPage = () => {
     setQuizAnswer('');
     setQuizCorrect(false);
     setShowTryAgain(false);
+    // Reset chocolate game state
+    setChocolateCount(1);
+    setChocolateClicks(0);
+    setShowChocolateCard(false);
+    setIsChocolateSpreading(false);
+    setChocolateSpreadAnimate(false);
+    setSpreadChocolates([]);
   };
 
   const handleQuizAnswer = (answer) => {
@@ -50,6 +74,49 @@ const MapPage = () => {
     } else {
       setShowTryAgain(true);
       setTimeout(() => setShowTryAgain(false), 2000);
+    }
+  };
+
+  const handleChocolateClick = () => {
+    // Prevent clicking if card is already showing or after 3 clicks
+    if (showChocolateCard || isChocolateSpreading || chocolateClicks >= 3) return;
+
+    const newClicks = chocolateClicks + 1;
+    setChocolateClicks(newClicks);
+    setChocolateCount((prev) => prev + 1);
+
+    // After 3rd click, spread chocolates from the Close button,
+    // then show the success popup centered on top.
+    if (newClicks === 3) {
+      // Determine origin (near the Close button). Fallback to center of viewport.
+      const rect = closeBtnRef.current?.getBoundingClientRect?.();
+      const origin = rect
+        ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+        : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+      setChocolateSpreadOrigin(origin);
+
+      // Generate a stable set of chocolate positions for the spread layer.
+      const viewportArea = window.innerWidth * window.innerHeight;
+      const chocolatesNeeded = Math.floor(viewportArea / (55 * 55));
+      const count = Math.min(240, Math.max(60, chocolatesNeeded));
+
+      const chocolates = Array.from({ length: count }).map(() => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        r: Math.random() * 360,
+        s: 0.7 + Math.random() * 0.8,
+        o: 0.55 + Math.random() * 0.45
+      }));
+      setSpreadChocolates(chocolates);
+
+      setIsChocolateSpreading(true);
+      setChocolateSpreadAnimate(false);
+      requestAnimationFrame(() => setChocolateSpreadAnimate(true));
+
+      // Show the popup after the spread completes.
+      // Match popup timing to the spread animation duration.
+      window.setTimeout(() => setShowChocolateCard(true), 1750);
     }
   };
 
@@ -193,6 +260,70 @@ const MapPage = () => {
             </div>
           )}
 
+          {/* Chocolate Day spread overlay (must be OUTSIDE the transformed card) */}
+          {selectedDay.day === 3 && isChocolateSpreading && (
+            <div
+              className="fixed inset-0"
+              style={{
+                zIndex: 70,
+                transform: `scale(${chocolateSpreadAnimate ? 1 : 0.02})`,
+                transformOrigin: `${chocolateSpreadOrigin.x}px ${chocolateSpreadOrigin.y}px`,
+                opacity: chocolateSpreadAnimate ? 1 : 0,
+                transition:
+                  'transform 1500ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms ease-out',
+                background: 'rgba(255, 255, 255, 0.35)',
+                backdropFilter: 'blur(2px)',
+                willChange: 'transform, opacity',
+                pointerEvents: 'none' // prevent accidental modal close while spreading
+              }}
+            >
+              {spreadChocolates.map((c, i) => (
+                <div
+                  key={i}
+                  className="absolute"
+                  style={{
+                    left: `${c.x}%`,
+                    top: `${c.y}%`,
+                    transform: `translate(-50%, -50%) rotate(${c.r}deg) scale(${c.s})`,
+                    opacity: c.o,
+                    fontSize: '3.25rem',
+                    filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.15))'
+                  }}
+                >
+                  🍫
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Chocolate Day success popup (centered on top of spread) */}
+          {selectedDay.day === 3 && showChocolateCard && (
+            <div
+              className="fixed inset-0 flex items-center justify-center"
+              style={{ zIndex: 80 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-white rounded-3xl p-8 text-gray-800 shadow-2xl max-w-md mx-4 border border-pink-100">
+                {/* subtle color scheme like the main modal card */}
+                <div className="text-6xl mb-4">🍫</div>
+                <p className="text-3xl font-bold mb-3 text-pink-600">
+                  Happy Chocolate Day! 🍫
+                </p>
+                <p className="text-lg text-gray-700">
+                  You filled the screen with sweetness! Just like you fill my life with joy 💕
+                </p>
+                <div className="mt-6 flex justify-center">
+                  <button
+                    onClick={closeModal}
+                    className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full font-bold transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div
             className={`bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all`}
             onClick={(e) => e.stopPropagation()}
@@ -275,6 +406,75 @@ const MapPage = () => {
                     </div>
                   )}
                 </div>
+              ) : selectedDay.day === 3 ? (
+                // Chocolate Day - Doubling Game
+                <div className="mb-6">
+                  <div className="relative z-30">
+                    <p className="text-lg font-semibold text-gray-700 mb-4">
+                      Click the chocolate to make more! 🍫
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Chocolates: {chocolateCount}
+                    </p>
+                  </div>
+
+                  {/* Chocolates grow horizontally with clicks */}
+                  <div className="flex items-center justify-center my-6">
+                    <div className="flex items-center gap-3">
+                      {Array.from({ length: chocolateCount }).map((_, idx) => {
+                        const disabled = isChocolateSpreading || chocolateClicks >= 3;
+                        if (idx === 0) {
+                          return (
+                            <button
+                              key={idx}
+                              onClick={handleChocolateClick}
+                              disabled={disabled}
+                              className={`text-7xl transform transition-transform duration-200 ${
+                                disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+                              }`}
+                              aria-label="Make more chocolates"
+                            >
+                              🍫
+                            </button>
+                          );
+                        }
+
+                        return (
+                          <div
+                            key={idx}
+                            className={`text-7xl transition-opacity duration-200 ${disabled ? 'opacity-50' : 'opacity-90'}`}
+                            aria-hidden="true"
+                          >
+                            🍫
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ) : selectedDay.day === 4 ? (
+                // Teddy Day - Cute Video
+                <div className="mb-6">
+                  <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white mb-4`}>
+                    <p className="text-2xl font-bold mb-2">
+                      You're my cuddly teddy! 🧸💕
+                    </p>
+                    <p className="text-sm opacity-90">
+                      Just like this adorable teddy, you bring warmth and comfort to my life ✨
+                    </p>
+                  </div>
+
+                  <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-2xl shadow-xl"
+                      src="https://www.youtube.com/embed/mCkT9Cxb-k4"
+                      title="Teddy Day Video"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
               ) : (
                 // Placeholder for other days
                 <div className="mb-6">
@@ -288,8 +488,12 @@ const MapPage = () => {
               )}
 
               <button
+                ref={selectedDay.day === 3 ? closeBtnRef : undefined}
                 onClick={closeModal}
-                className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-bold transition-colors"
+                disabled={selectedDay.day === 3 && isChocolateSpreading && !showChocolateCard}
+                className={`mx-auto block bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-bold transition-colors ${
+                  selectedDay.day === 3 && isChocolateSpreading && !showChocolateCard ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 Close
               </button>
