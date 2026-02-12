@@ -475,6 +475,23 @@ const MapPage = () => {
                     />
                   </div>
                 </div>
+              ) : selectedDay.day === 5 ? (
+                // Promise Day
+                <div className="mb-6">
+                  <img
+                    src="/promise-day.jpg"
+                    alt="Us"
+                    className="w-full max-w-md mx-auto rounded-2xl shadow-xl mb-4"
+                  />
+                  <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white`}>
+                    <p className="text-2xl font-bold mb-3">
+                      Ahh Promise Day! 🤝
+                    </p>
+                    <p className="text-base leading-relaxed">
+                      Don't worry, nothing surprising here but yeah... promises. We both know they haven't always been our strong suit. But let's make them mean something from now on? Not because it's Promise Day, but because we actually want to. Let's just keep our word to each other - that's it. ❤️
+                    </p>
+                  </div>
+                </div>
               ) : (
                 // Placeholder for other days
                 <div className="mb-6">
