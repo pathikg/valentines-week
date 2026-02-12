@@ -28,6 +28,9 @@ const MapPage = () => {
   const [spreadChocolates, setSpreadChocolates] = useState([]);
   const closeBtnRef = useRef(null);
 
+  // Hug Day carousel state
+  const [hugStep, setHugStep] = useState(0);
+
   // For testing, you can uncomment this to simulate different dates
   // const [currentDate, setCurrentDate] = useState('2026-02-09');
 
@@ -49,6 +52,8 @@ const MapPage = () => {
       setIsChocolateSpreading(false);
       setChocolateSpreadAnimate(false);
       setSpreadChocolates([]);
+      // Reset hug carousel
+      setHugStep(0);
     }
   };
 
@@ -64,6 +69,8 @@ const MapPage = () => {
     setIsChocolateSpreading(false);
     setChocolateSpreadAnimate(false);
     setSpreadChocolates([]);
+    // Reset hug carousel
+    setHugStep(0);
   };
 
   const handleQuizAnswer = (answer) => {
@@ -491,6 +498,98 @@ const MapPage = () => {
                       Don't worry, nothing surprising here but yeah... promises. We both know they haven't always been our strong suit. But let's make them mean something from now on? Not because it's Promise Day, but because we actually want to. Let's just keep our word to each other - that's it. ❤️
                     </p>
                   </div>
+                </div>
+              ) : selectedDay.day === 6 ? (
+                // Hug Day - Carousel
+                <div className="mb-6">
+                  {(() => {
+                    const hugImages = [
+                      "https://www.shutterstock.com/image-vector/typography-slogan-bear-doll-couple-600nw-2279971169.jpg",
+                      "https://i.pinimg.com/736x/67/60/34/676034d2557c0a622c66498a9d41fe97.jpg",
+                      "https://i.pinimg.com/736x/f4/ed/53/f4ed53aee2ff97e8830a0fa0a64005b0.jpg",
+                      "https://i.pinimg.com/736x/69/a1/43/69a143941513d3548cef632af5b504d3.jpg"
+                    ];
+
+                    const messages = [
+                      "Here's a hug for you! 🤗",
+                      "More hugs! 🤗💚",
+                      "Even more hugs!! 🤗✨",
+                      "And more more hugs!!! 🤗💕"
+                    ];
+
+                    if (hugStep < 4) {
+                      return (
+                        <>
+                          <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white mb-4`}>
+                            <p className="text-2xl font-bold">
+                              {messages[hugStep]}
+                            </p>
+                          </div>
+
+                          <img
+                            src={hugImages[hugStep]}
+                            alt={`Hug ${hugStep + 1}`}
+                            className="w-full max-w-sm mx-auto rounded-2xl shadow-xl mb-4"
+                          />
+
+                          <div className="flex justify-between items-center gap-4">
+                            <button
+                              onClick={() => setHugStep(Math.max(0, hugStep - 1))}
+                              disabled={hugStep === 0}
+                              className={`px-6 py-2 rounded-full font-bold transition-colors ${
+                                hugStep === 0
+                                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  : 'bg-green-500 hover:bg-green-600 text-white'
+                              }`}
+                            >
+                              ← Back
+                            </button>
+                            <button
+                              onClick={() => setHugStep(hugStep + 1)}
+                              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full font-bold transition-colors"
+                            >
+                              Next →
+                            </button>
+                          </div>
+                        </>
+                      );
+                    }
+
+                    // Final step - show all hugs in grid
+                    return (
+                      <>
+                        <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white mb-4`}>
+                          <p className="text-2xl font-bold mb-2">
+                            All the hugs! 🤗
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          {hugImages.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              alt={`Hug ${idx + 1}`}
+                              className="w-full h-48 object-cover rounded-xl shadow-lg"
+                            />
+                          ))}
+                        </div>
+
+                        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 text-center mb-4">
+                          <p className="text-gray-700 text-base">
+                            Ah, but no amount of hugs are ever enough... 🤗💚
+                          </p>
+                        </div>
+
+                        <button
+                          onClick={() => setHugStep(0)}
+                          className="w-full px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full font-bold transition-colors"
+                        >
+                          ← Start Over
+                        </button>
+                      </>
+                    );
+                  })()}
                 </div>
               ) : (
                 // Placeholder for other days
