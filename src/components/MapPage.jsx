@@ -31,6 +31,10 @@ const MapPage = () => {
   // Hug Day carousel state
   const [hugStep, setHugStep] = useState(0);
 
+  // Kiss Day state
+  const [isKissing, setIsKissing] = useState(false);
+  const [kissCount, setKissCount] = useState(0);
+
   // For testing, you can uncomment this to simulate different dates
   // const [currentDate, setCurrentDate] = useState('2026-02-09');
 
@@ -54,6 +58,9 @@ const MapPage = () => {
       setSpreadChocolates([]);
       // Reset hug carousel
       setHugStep(0);
+      // Reset kiss state
+      setIsKissing(false);
+      setKissCount(0);
     }
   };
 
@@ -71,6 +78,9 @@ const MapPage = () => {
     setSpreadChocolates([]);
     // Reset hug carousel
     setHugStep(0);
+    // Reset kiss state
+    setIsKissing(false);
+    setKissCount(0);
   };
 
   const handleQuizAnswer = (answer) => {
@@ -590,6 +600,47 @@ const MapPage = () => {
                       </>
                     );
                   })()}
+                </div>
+              ) : selectedDay.day === 7 ? (
+                // Kiss Day - Interactive Kissing
+                <div className="mb-6">
+                  <div className="relative">
+                    <img
+                      src={isKissing ? "/kiss-day-2.jpg" : "/kiss-day-1.jpg"}
+                      alt="Kiss Day"
+                      className="w-full max-w-md mx-auto rounded-2xl shadow-xl mb-4 transition-all duration-500"
+                    />
+
+                    {!isKissing && (
+                      <div className="text-center">
+                        <button
+                          onClick={() => {
+                            setIsKissing(true);
+                            setKissCount(prev => prev + 1);
+                            setTimeout(() => {
+                              setIsKissing(false);
+                            }, 2000);
+                          }}
+                          className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                        >
+                          💋 Kiss me!
+                        </button>
+                        {kissCount > 0 && (
+                          <p className="text-gray-600 text-sm mt-3">
+                            Kisses: {kissCount} 💕
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {isKissing && (
+                      <div className="text-center animate-pulse">
+                        <p className="text-2xl font-bold text-pink-600">
+                          😘 Mwah! 💋
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 // Placeholder for other days
