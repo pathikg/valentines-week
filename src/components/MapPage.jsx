@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import ValentineARCamera from './ValentineARCamera';
 
 const valentineWeek = [
   { day: 1, date: '2026-02-07', name: 'Rose Day', emoji: '🌹', color: 'from-red-400 to-pink-400' },
@@ -34,6 +35,13 @@ const MapPage = () => {
   // Kiss Day state
   const [isKissing, setIsKissing] = useState(false);
   const [kissCount, setKissCount] = useState(0);
+
+  // Valentine's Day AR Camera state
+  const [showARCamera, setShowARCamera] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [faceDetectionModel, setFaceDetectionModel] = useState(null);
+  const [cameraStream, setCameraStream] = useState(null);
 
   // For testing, you can uncomment this to simulate different dates
   // const [currentDate, setCurrentDate] = useState('2026-02-09');
@@ -81,6 +89,12 @@ const MapPage = () => {
     // Reset kiss state
     setIsKissing(false);
     setKissCount(0);
+    // Stop camera and reset AR state
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+    setShowARCamera(false);
   };
 
   const handleQuizAnswer = (answer) => {
@@ -342,7 +356,7 @@ const MapPage = () => {
           )}
 
           <div
-            className={`bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all`}
+            className={`bg-white rounded-3xl p-8 max-w-3xl w-full shadow-2xl transform transition-all`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
@@ -641,6 +655,31 @@ const MapPage = () => {
                       </div>
                     )}
                   </div>
+                </div>
+              ) : selectedDay.day === 8 ? (
+                // Valentine's Day - AR Crown Filter
+                <div className="mb-6">
+                  {!showARCamera ? (
+                    <>
+                      <div className="text-8xl mb-4">{selectedDay.emoji}</div>
+                      <div className={`bg-gradient-to-br ${selectedDay.color} rounded-2xl p-6 text-white mb-4`}>
+                        <p className="text-2xl font-bold mb-3">
+                          You're My Queen! 👑
+                        </p>
+                        <p className="text-base">
+                          Click below to try on your royal crown! ✨
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowARCamera(true)}
+                        className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                      >
+                        👑 Try Your Crown!
+                      </button>
+                    </>
+                  ) : (
+                    <ValentineARCamera onClose={() => setShowARCamera(false)} />
+                  )}
                 </div>
               ) : (
                 // Placeholder for other days
